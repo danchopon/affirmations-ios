@@ -1,27 +1,35 @@
 import SwiftUI
+import CheckIn
+import History
+import Insights
+import Settings
+import Paywall
 
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
 
     var body: some View {
+        @Bindable var router = router
+
         TabView {
-            Text("Check In")
+            CheckInView()
                 .tabItem { Label("Today", systemImage: "heart.fill") }
 
-            Text("History")
+            HistoryView()
                 .tabItem { Label("History", systemImage: "calendar") }
 
-            Text("Insights")
+            InsightsView()
                 .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
 
-            Text("Settings")
+            SettingsView()
                 .tabItem { Label("Settings", systemImage: "gear") }
         }
-        .sheet(item: Binding(
-            get: { router.showPaywall },
-            set: { _ in router.dismissPaywall() }
-        )) { _ in
-            Text("Paywall")
+        .sheet(item: $router.showPaywall) { _ in
+            PaywallView()
+        }
+        .sheet(isPresented: $router.showOnboarding) {
+            // OnboardingView() — add when onboarding is built
+            Text("Welcome")
         }
     }
 }
