@@ -24,6 +24,7 @@ let project = Project(
                 "CFBundleDisplayName": "Affirmations"
             ]),
             sources: ["App/**"],
+            entitlements: .file(path: "App/Affirmations.entitlements"),
             dependencies: [
                 .target(name: "CheckIn"),
                 .target(name: "Affirmation"),

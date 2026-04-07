@@ -24,16 +24,27 @@ public enum AppMigrationPlan: SchemaMigrationPlan {
     }
 }
 
+// MARK: - App Group
+
+/// Shared container identifier. Used by the main app and the widget extension.
+/// Must match the entitlement in App/Affirmations.entitlements and any future widget target.
+public let appGroupIdentifier = "group.com.affirmations.shared"
+
 // MARK: - Model container factory
 
 public enum AppModelContainer {
     public static let shared: ModelContainer = {
         do {
-            // Use variadics form -- no explicit Schema() creation to avoid
-            // version tracking conflict with migration plan on first launch.
+            // Store in the App Group container so a widget extension can read the same database.
+            let storeURL = FileManager.default
+                .containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)?
+                .appendingPathComponent("Affirmations.sqlite")
+
+            let config = ModelConfiguration(url: storeURL ?? defaultStoreURL())
             return try ModelContainer(
                 for: MoodEntry.self, Affirmation.self, UserProfile.self,
-                migrationPlan: AppMigrationPlan.self
+                migrationPlan: AppMigrationPlan.self,
+                configurations: config
             )
         } catch {
             logger.critical("Failed to create ModelContainer: \(error)")
@@ -53,4 +64,10 @@ public enum AppModelContainer {
             fatalError("Failed to create preview ModelContainer: \(error)")
         }
     }()
+
+    /// Fallback URL in the app's Documents directory if the App Group container is unavailable.
+    private static func defaultStoreURL() -> URL {
+        logger.warning("App Group container unavailable — falling back to Documents directory")
+        return URL.documentsDirectory.appendingPathComponent("Affirmations.sqlite")
+    }
 }
