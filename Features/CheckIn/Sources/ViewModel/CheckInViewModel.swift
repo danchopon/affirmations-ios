@@ -20,8 +20,11 @@ public final class CheckInViewModel {
     public var isGeneratingAffirmation: Bool = false
     public var generatedAffirmation: String?
     public var errorMessage: String?
+    /// True when the AI consent sheet should be presented before generating an affirmation.
+    public var showAIConsent: Bool = false
 
     private var hasCompleted = false
+    private var pendingProfile: UserProfile?
 
     // MARK: - Dependencies
 
@@ -107,10 +110,38 @@ public final class CheckInViewModel {
 
     // MARK: - Private
 
+    /// Called when the user accepts the AI consent sheet.
+    public func acceptAIConsent(profile: UserProfile, entry: MoodEntry) async {
+        profile.aiConsentGranted = true
+        profile.aiConsentDate = .now
+        do {
+            try modelContext.save()
+        } catch {
+            logger.error("Failed to save AI consent: \(error)")
+        }
+        showAIConsent = false
+        pendingProfile = nil
+        await generateAffirmation(for: entry, profile: profile)
+    }
+
+    /// Called when the user declines the AI consent sheet.
+    public func declineAIConsent(entry: MoodEntry) async {
+        showAIConsent = false
+        pendingProfile = nil
+        let tone = (try? modelContext.fetch(FetchDescriptor<UserProfile>()))?.first?.preferredToneValue ?? .gentle
+        generatedAffirmation = await fallback(score: entry.score, tone: tone)
+    }
+
     private func generateAffirmation(for entry: MoodEntry, profile: UserProfile?) async {
         let tone = profile?.preferredToneValue ?? .gentle
-        guard let profile, profile.aiConsentGranted else {
+        guard let profile else {
             generatedAffirmation = await fallback(score: entry.score, tone: tone)
+            return
+        }
+        guard profile.aiConsentGranted else {
+            // First time: show consent sheet and pause until user decides.
+            pendingProfile = profile
+            showAIConsent = true
             return
         }
 

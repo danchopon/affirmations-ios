@@ -209,5 +209,30 @@ private struct SummaryStep: View {
                 }
             }
         }
+        .sheet(isPresented: $vm.showAIConsent) {
+            ConsentSheetWrapper(vm: vm, profiles: profiles)
+        }
+    }
+}
+
+/// Wrapper that can hand the current MoodEntry back to the consent callbacks.
+/// The entry was already saved by completeCheckIn before consent was needed.
+@MainActor
+private struct ConsentSheetWrapper: View {
+    @Bindable var vm: CheckInViewModel
+    let profiles: [UserProfile]
+    @Query(sort: \MoodEntry.date, order: .reverse) private var recentEntries: [MoodEntry]
+
+    var body: some View {
+        AIConsentView(
+            onAccept: {
+                guard let profile = profiles.first, let entry = recentEntries.first else { return }
+                Task { await vm.acceptAIConsent(profile: profile, entry: entry) }
+            },
+            onDecline: {
+                guard let entry = recentEntries.first else { return }
+                Task { await vm.declineAIConsent(entry: entry) }
+            }
+        )
     }
 }
