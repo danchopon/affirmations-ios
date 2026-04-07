@@ -4,15 +4,15 @@ import SwiftData
 @Model
 public final class MoodEntry {
     public var id: UUID
-    public var date: Date
+    @Attribute(.indexed) public var date: Date
     /// Mood score 1-10.
     public var score: Int
     public var note: String?
     /// Stored as JSON array of Emotion raw values.
     public var emotions: [String]
     public var checkinDuration: TimeInterval
-    /// One-to-optional relationship to Affirmation.
-    @Relationship(deleteRule: .cascade)
+    /// One-to-optional relationship to Affirmation. Cascade deletes the affirmation when the entry is deleted.
+    @Relationship(deleteRule: .cascade, inverse: \Affirmation.moodEntry)
     public var affirmation: Affirmation?
 
     public init(

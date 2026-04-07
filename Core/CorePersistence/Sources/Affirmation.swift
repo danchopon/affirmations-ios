@@ -10,6 +10,8 @@ public final class Affirmation {
     public var isFavorite: Bool
     /// Duration of AI generation in seconds, for analytics.
     public var generationDuration: TimeInterval?
+    /// Back-reference to the owning MoodEntry. Explicit inverse prevents fragile SwiftData inference.
+    @Relationship public var moodEntry: MoodEntry?
 
     public init(
         id: UUID = UUID(),
