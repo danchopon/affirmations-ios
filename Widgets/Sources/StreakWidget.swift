@@ -2,6 +2,7 @@ import WidgetKit
 import SwiftUI
 import SwiftData
 import CorePersistence
+import DesignSystem
 
 // MARK: - Entry
 
