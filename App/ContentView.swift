@@ -7,6 +7,7 @@ import Paywall
 
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
+    @State private var errorHandler = ErrorHandler()
 
     var body: some View {
         @Bindable var router = router
@@ -39,5 +40,18 @@ struct ContentView: View {
             // OnboardingView() — add when onboarding is built
             Text("Welcome")
         }
+        .alert(
+            "Error",
+            isPresented: Binding(
+                get: { errorHandler.activeAlert != nil },
+                set: { if !$0 { errorHandler.activeAlert = nil } }
+            ),
+            presenting: errorHandler.activeAlert
+        ) { _ in
+            Button("OK") { errorHandler.activeAlert = nil }
+        } message: { error in
+            Text(error.userMessage)
+        }
+        .environment(\.errorHandler, errorHandler)
     }
 }
