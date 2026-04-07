@@ -142,6 +142,7 @@ let project = Project(
                 .target(name: "CoreAnalytics"),
                 .target(name: "CorePersistence"),
                 .target(name: "CorePurchases"),
+                .target(name: "CoreNotifications"),
                 .target(name: "DesignSystem")
             ]
         ),
