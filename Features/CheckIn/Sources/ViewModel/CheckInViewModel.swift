@@ -18,6 +18,8 @@ public final class CheckInViewModel {
     public var generatedAffirmation: String?
     public var errorMessage: String?
 
+    private var hasCompleted = false
+
     // MARK: - Dependencies
 
     private let analytics: any AnalyticsServiceProtocol
@@ -62,6 +64,9 @@ public final class CheckInViewModel {
     }
 
     public func completeCheckIn(userProfile: UserProfile?) async {
+        guard !hasCompleted else { return }
+        hasCompleted = true
+
         let duration = Date.now.timeIntervalSince(startDate)
 
         // 1. Save MoodEntry immediately -- offline-first
