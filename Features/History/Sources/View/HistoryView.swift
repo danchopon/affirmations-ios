@@ -36,29 +36,45 @@ public struct HistoryView: View {
     }
 
     public var body: some View {
-        List {
-            Section {
+        ScrollView {
+            LazyVStack(spacing: 0, pinnedViews: .sectionHeaders) {
                 MoodCalendarGrid(
                     entries: entries,
                     displayedMonth: $displayedMonth,
                     selectedDay: $selectedDay
                 )
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-            }
+                .padding(.bottom, 16)
 
-            Section(sectionTitle) {
-                if displayedEntries.isEmpty {
-                    Text("No check-ins")
-                        .foregroundStyle(.secondary)
+                Section {
+                    if displayedEntries.isEmpty {
+                        Text("No check-ins")
+                            .foregroundStyle(.secondary)
+                            .font(.appCaption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.vertical, 12)
+                    } else {
+                        ForEach(displayedEntries) { entry in
+                            MoodEntryRow(entry: entry)
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        deleteEntry(entry)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                        }
+                    }
+                } header: {
+                    Text(sectionTitle.uppercased())
                         .font(.appCaption)
-                } else {
-                    ForEach(displayedEntries) { entry in
-                        MoodEntryRow(entry: entry)
-                    }
-                    .onDelete { offsets in
-                        deleteEntries(at: offsets, from: displayedEntries)
-                    }
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .background(.background)
                 }
             }
         }
@@ -74,10 +90,8 @@ public struct HistoryView: View {
         }
     }
 
-    private func deleteEntries(at offsets: IndexSet, from source: [MoodEntry]) {
-        for index in offsets {
-            modelContext.delete(source[index])
-            analytics.track(HistoryEvent.entryDeleted)
-        }
+    private func deleteEntry(_ entry: MoodEntry) {
+        modelContext.delete(entry)
+        analytics.track(HistoryEvent.entryDeleted)
     }
 }

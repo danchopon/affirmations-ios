@@ -12,7 +12,7 @@ struct MoodCalendarGrid: View {
 
     private var weekdaySymbols: [String] {
         // Rotate veryShortWeekdaySymbols so the calendar's firstWeekday is leftmost.
-        var symbols = calendar.veryShortWeekdaySymbols  // index 0 = Sunday
+        let symbols = calendar.veryShortWeekdaySymbols  // index 0 = Sunday
         let offset = calendar.firstWeekday - 1
         return Array(symbols[offset...] + symbols[..<offset])
     }
@@ -26,7 +26,7 @@ struct MoodCalendarGrid: View {
         return map.mapValues { Double($0.reduce(0, +)) / Double($0.count) }
     }
 
-    private var daysInMonth: [Date?] {
+    private var daysInMonth: [CalendarDay] {
         guard
             let range = calendar.range(of: .day, in: .month, for: displayedMonth),
             let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth))
@@ -34,10 +34,10 @@ struct MoodCalendarGrid: View {
 
         let rawWeekday = calendar.component(.weekday, from: firstDay)       // 1 = Sun
         let offset = (rawWeekday - calendar.firstWeekday + 7) % 7
-        var days: [Date?] = Array(repeating: nil, count: offset)
+        var days: [CalendarDay] = (0..<offset).map { CalendarDay.empty(index: $0, month: displayedMonth) }
         for day in range {
             if let date = calendar.date(byAdding: .day, value: day - 1, to: firstDay) {
-                days.append(date)
+                days.append(CalendarDay(date: date))
             }
         }
         return days
@@ -86,8 +86,8 @@ struct MoodCalendarGrid: View {
             .padding(.horizontal)
 
             LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(Array(daysInMonth.enumerated()), id: \.offset) { _, date in
-                    if let date {
+                ForEach(daysInMonth) { item in
+                    if let date = item.date {
                         DayCell(
                             date: date,
                             avgScore: scoresByDay[calendar.startOfDay(for: date)],
@@ -105,6 +105,26 @@ struct MoodCalendarGrid: View {
             }
             .padding(.horizontal)
         }
+        .id(displayedMonth)
+    }
+}
+
+private struct CalendarDay: Identifiable {
+    let id: String
+    let date: Date?
+
+    init(date: Date) {
+        self.date = date
+        self.id = String(date.timeIntervalSinceReferenceDate)
+    }
+
+    static func empty(index: Int, month: Date) -> CalendarDay {
+        CalendarDay(id: "empty-\(Int(month.timeIntervalSinceReferenceDate))-\(index)", date: nil)
+    }
+
+    private init(id: String, date: Date?) {
+        self.id = id
+        self.date = date
     }
 }
 
