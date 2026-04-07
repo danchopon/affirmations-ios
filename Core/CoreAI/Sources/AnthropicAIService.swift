@@ -6,14 +6,14 @@ private let logger = Logger(subsystem: "com.affirmations", category: "AI")
 
 /// Calls the Anthropic Messages API via a backend proxy.
 /// API key is NEVER stored in the app -- proxy holds it.
-public final class AnthropicAIService: AIServiceProtocol, @unchecked Sendable {
+public final class AnthropicAIService: AIServiceProtocol, Sendable {
     private let proxyURL: URL
     private let rateLimiter: AIRateLimiter
     private let cache: AIResponseCache
-    private let isPremium: () -> Bool
+    private let isPremium: @Sendable () -> Bool
 
-    public var remainingFreeRequests: Int {
-        rateLimiter.remainingFreeToday
+    public func remainingFreeRequests() async -> Int {
+        await rateLimiter.remainingFreeToday
     }
 
     public init(
@@ -28,20 +28,20 @@ public final class AnthropicAIService: AIServiceProtocol, @unchecked Sendable {
 
     public func generateAffirmation(context: AffirmationContext) async throws -> String {
         // Cache hit
-        if let cached = cache.get(score: context.currentScore, emotions: context.emotions, tone: context.tone) {
+        if let cached = await cache.get(score: context.currentScore, emotions: context.emotions, tone: context.tone) {
             logger.debug("Cache hit for score=\(context.currentScore)")
             return cached
         }
 
         // Rate limit check
-        guard rateLimiter.allow(isPremium: isPremium()) else {
+        guard await rateLimiter.allow(isPremium: isPremium()) else {
             throw AIServiceError.rateLimitExceeded
         }
 
         let prompt = buildPrompt(context: context)
         let result = try await requestWithRetry(prompt: prompt, model: "claude-haiku-4-5")
 
-        cache.set(text: result, score: context.currentScore, emotions: context.emotions, tone: context.tone)
+        await cache.set(text: result, score: context.currentScore, emotions: context.emotions, tone: context.tone)
         return result
     }
 

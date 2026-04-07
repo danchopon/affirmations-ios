@@ -3,7 +3,8 @@ import CorePersistence
 
 /// Simple in-memory cache for affirmation responses.
 /// Keyed on (score, sorted emotions, tone) with TTL.
-final class AIResponseCache: @unchecked Sendable {
+/// Actor ensures all mutable state is accessed from a single isolation domain.
+actor AIResponseCache {
     private struct Entry {
         let text: String
         let expiresAt: Date

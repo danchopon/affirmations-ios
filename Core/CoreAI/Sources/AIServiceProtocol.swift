@@ -59,5 +59,5 @@ public enum AIServiceError: Error, Sendable {
 
 public protocol AIServiceProtocol: Sendable {
     func generateAffirmation(context: AffirmationContext) async throws -> String
-    var remainingFreeRequests: Int { get }
+    func remainingFreeRequests() async -> Int
 }

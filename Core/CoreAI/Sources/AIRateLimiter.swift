@@ -1,7 +1,8 @@
 import Foundation
 
 /// Client-side rate limiter. Tracks free tier daily quota and per-minute burst limit.
-final class AIRateLimiter: @unchecked Sendable {
+/// Actor ensures all mutable state is accessed from a single isolation domain.
+actor AIRateLimiter {
     private let freeDaily: Int
     private let burstPerMinute: Int
     private let defaults: UserDefaults
@@ -10,6 +11,12 @@ final class AIRateLimiter: @unchecked Sendable {
 
     private let dailyCountKey = "ai.daily.count"
     private let dailyDateKey = "ai.daily.date"
+
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
 
     init(freeDaily: Int = 3, burstPerMinute: Int = 5, defaults: UserDefaults = .standard) {
         self.freeDaily = freeDaily
@@ -61,8 +68,6 @@ final class AIRateLimiter: @unchecked Sendable {
     }
 
     private var todayString: String {
-        let f = DateFormatter()
-        f.dateFormat = "yyyy-MM-dd"
-        return f.string(from: .now)
+        AIRateLimiter.dateFormatter.string(from: .now)
     }
 }

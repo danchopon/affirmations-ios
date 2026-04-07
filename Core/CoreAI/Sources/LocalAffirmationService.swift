@@ -3,8 +3,8 @@ import CorePersistence
 
 /// Offline fallback. Returns a random affirmation from a curated local pool.
 /// Used when: no network, free tier exhausted, or AI consent not granted.
-public final class LocalAffirmationService: AIServiceProtocol, @unchecked Sendable {
-    public var remainingFreeRequests: Int { Int.max }
+public final class LocalAffirmationService: AIServiceProtocol, Sendable {
+    public func remainingFreeRequests() async -> Int { Int.max }
 
     public init() {}
 
