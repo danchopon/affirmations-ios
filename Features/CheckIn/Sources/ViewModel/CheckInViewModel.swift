@@ -1,9 +1,12 @@
 import Foundation
 import Observation
+import OSLog
 import SwiftData
 import CoreAnalytics
 import CorePersistence
 import CoreAI
+
+private let logger = Logger(subsystem: "com.affirmations", category: "CheckIn")
 
 @Observable
 @MainActor
@@ -77,7 +80,14 @@ public final class CheckInViewModel {
             checkinDuration: duration
         )
         modelContext.insert(entry)
-        try? modelContext.save()
+        do {
+            try modelContext.save()
+        } catch {
+            logger.error("Failed to save MoodEntry: \(error)")
+            errorMessage = "Could not save your check-in. Please try again."
+            hasCompleted = false
+            return
+        }
 
         analytics.track(CheckInEvent.completed(
             score: selectedScore,
@@ -124,7 +134,11 @@ public final class CheckInViewModel {
             let text = try await aiService.generateAffirmation(context: context)
             let affirmation = Affirmation(text: text, tone: profile.preferredToneValue)
             entry.affirmation = affirmation
-            try? modelContext.save()
+            do {
+                try modelContext.save()
+            } catch {
+                logger.error("Failed to save Affirmation: \(error)")
+            }
             generatedAffirmation = text
         } catch AIServiceError.rateLimitExceeded {
             generatedAffirmation = await fallback(score: entry.score, tone: profile.preferredToneValue)
