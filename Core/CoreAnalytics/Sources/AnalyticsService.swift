@@ -48,18 +48,17 @@ public final class AnalyticsService: AnalyticsServiceProtocol, @unchecked Sendab
 public extension AnalyticsService {
     /// Production: Amplitude + Firebase (placeholders until SDKs are added).
     static var live: AnalyticsService {
-        var middlewares: [any AnalyticsMiddleware] = [
+        let middlewares: [any AnalyticsMiddleware] = [
             SessionEnrichmentMiddleware()
         ]
-        #if DEBUG
-        middlewares.append(DebugLoggingMiddleware())
-        #endif
 
-        // Placeholder backends -- replace with AmplitudeBackend / FirebaseBackend
-        // once those SDKs are added as SPM dependencies.
-        let backends: [any AnalyticsBackend] = [
-            ConsoleAnalyticsBackend()
-        ]
+        // ConsoleAnalyticsBackend prints every event with all properties in DEBUG.
+        // Replace with AmplitudeBackend / FirebaseBackend once those SDKs are added.
+        #if DEBUG
+        let backends: [any AnalyticsBackend] = [ConsoleAnalyticsBackend()]
+        #else
+        let backends: [any AnalyticsBackend] = []
+        #endif
 
         return AnalyticsService(backends: backends, middlewares: middlewares)
     }
