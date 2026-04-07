@@ -12,17 +12,25 @@ struct ContentView: View {
         @Bindable var router = router
 
         TabView {
-            CheckInView()
-                .tabItem { Label("Today", systemImage: "heart.fill") }
+            NavigationStack(path: $router.checkInPath) {
+                CheckInView()
+            }
+            .tabItem { Label("Today", systemImage: "heart.fill") }
 
-            HistoryView()
-                .tabItem { Label("History", systemImage: "calendar") }
+            NavigationStack(path: $router.historyPath) {
+                HistoryView()
+            }
+            .tabItem { Label("History", systemImage: "calendar") }
 
-            InsightsView()
-                .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
+            NavigationStack(path: $router.insightsPath) {
+                InsightsView()
+            }
+            .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
 
-            SettingsView()
-                .tabItem { Label("Settings", systemImage: "gear") }
+            NavigationStack(path: $router.settingsPath) {
+                SettingsView()
+            }
+            .tabItem { Label("Settings", systemImage: "gear") }
         }
         .sheet(item: $router.showPaywall) { _ in
             PaywallView()
