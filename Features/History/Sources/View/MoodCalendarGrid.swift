@@ -76,7 +76,7 @@ struct MoodCalendarGrid: View {
             .padding(.horizontal)
 
             LazyVGrid(columns: columns, spacing: 4) {
-                ForEach(weekdaySymbols, id: \.self) { symbol in
+                ForEach(Array(weekdaySymbols.enumerated()), id: \.offset) { _, symbol in
                     Text(symbol)
                         .font(.appCaption)
                         .foregroundStyle(.secondary)
