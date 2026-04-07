@@ -1,5 +1,8 @@
 import Foundation
+import OSLog
 import SwiftData
+
+private let logger = Logger(subsystem: "com.affirmations", category: "Persistence")
 
 // MARK: - Versioned schema for safe migrations
 
@@ -33,6 +36,7 @@ public enum AppModelContainer {
                 migrationPlan: AppMigrationPlan.self
             )
         } catch {
+            logger.critical("Failed to create ModelContainer: \(error)")
             fatalError("Failed to create ModelContainer: \(error)")
         }
     }()
