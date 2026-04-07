@@ -35,16 +35,14 @@ public let appGroupIdentifier = "group.com.affirmations.shared"
 public enum AppModelContainer {
     public static let shared: ModelContainer = {
         do {
-            // Store in the App Group container so a widget extension can read the same database.
-            let storeURL = FileManager.default
-                .containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)?
-                .appendingPathComponent("Affirmations.sqlite")
-
-            let config = ModelConfiguration(url: storeURL ?? defaultStoreURL())
+            // Use variadics form — no explicit Schema() or ModelConfiguration(url:) here.
+            // Combining configurations: with migrationPlan: triggers a version-tracking
+            // conflict in SwiftData on first launch (database does not yet exist).
+            // The App Group store migration is deferred to when a widget target is added;
+            // at that point a SchemaMigrationPlan stage can move the file atomically.
             return try ModelContainer(
                 for: MoodEntry.self, Affirmation.self, UserProfile.self,
-                migrationPlan: AppMigrationPlan.self,
-                configurations: config
+                migrationPlan: AppMigrationPlan.self
             )
         } catch {
             logger.critical("Failed to create ModelContainer: \(error)")
@@ -65,9 +63,4 @@ public enum AppModelContainer {
         }
     }()
 
-    /// Fallback URL in the app's Documents directory if the App Group container is unavailable.
-    private static func defaultStoreURL() -> URL {
-        logger.warning("App Group container unavailable — falling back to Documents directory")
-        return URL.documentsDirectory.appendingPathComponent("Affirmations.sqlite")
-    }
 }
