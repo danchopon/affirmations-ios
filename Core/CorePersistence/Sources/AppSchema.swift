@@ -25,10 +25,13 @@ public enum AppMigrationPlan: SchemaMigrationPlan {
 
 public enum AppModelContainer {
     public static let shared: ModelContainer = {
-        let schema = Schema(AppSchemaV1.models, version: AppSchemaV1.versionIdentifier)
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return try ModelContainer(for: schema, migrationPlan: AppMigrationPlan.self, configurations: config)
+            // Use variadics form -- no explicit Schema() creation to avoid
+            // version tracking conflict with migration plan on first launch.
+            return try ModelContainer(
+                for: MoodEntry.self, Affirmation.self, UserProfile.self,
+                migrationPlan: AppMigrationPlan.self
+            )
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
@@ -36,10 +39,12 @@ public enum AppModelContainer {
 
     /// In-memory container for tests and previews.
     public static var preview: ModelContainer = {
-        let schema = Schema(AppSchemaV1.models, version: AppSchemaV1.versionIdentifier)
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         do {
-            return try ModelContainer(for: schema, configurations: config)
+            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+            return try ModelContainer(
+                for: MoodEntry.self, Affirmation.self, UserProfile.self,
+                configurations: config
+            )
         } catch {
             fatalError("Failed to create preview ModelContainer: \(error)")
         }
