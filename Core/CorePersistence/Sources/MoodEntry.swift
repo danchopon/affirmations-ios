@@ -4,7 +4,8 @@ import SwiftData
 @Model
 public final class MoodEntry {
     public var id: UUID
-    @Attribute(.indexed) public var date: Date
+    // TODO: add #Index<MoodEntry>([\.date]) once deployment target is raised to iOS 18
+    public var date: Date
     /// Mood score 1-10.
     public var score: Int
     public var note: String?
