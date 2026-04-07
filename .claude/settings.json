@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "mcp__xcodebuildmcp__*",
+      "Bash(git *)",
+      "Bash(swift *)"
+    ],
+    "deny": [
+      "Write(.env*)",
+      "Write(**/Secrets.swift)",
+      "Bash(rm -rf *)"
+    ]
+  },
+  "enabledPlugins": {
+    "axiom@axiom-marketplace": true
+  }
+}

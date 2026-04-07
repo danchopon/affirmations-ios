@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "debug-generated-project": {
+      "source": "tuist/agent-skills",
+      "sourceType": "github",
+      "computedHash": "a794be2fba4b4d1c55ab734cac3d04f95985934c3929cf87414814254c5c1dee"
+    },
+    "swiftui-pro": {
+      "source": "twostraws/swiftui-agent-skill",
+      "sourceType": "github",
+      "computedHash": "ce653d19fd00a4874489003025e9235be542e7134ff3c543e20afeb53fc3bc9a"
+    },
+    "using-tuist-generated-projects": {
+      "source": "tuist/agent-skills",
+      "sourceType": "github",
+      "computedHash": "333f414afa906998e8e006fd346abab7d1b65d0ac2835e9fe466ae99f6d7d502"
+    }
+  }
+}
