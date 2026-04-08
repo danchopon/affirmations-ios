@@ -53,7 +53,7 @@ let project = Project(
             name: "AffirmationsWidget",
             destinations: .iOS,
             product: .appExtension,
-            bundleId: "com.affirmations.app.widget",
+            bundleId: "danchopon.affirmations.app.widget",
             deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: [
                 "NSExtension": .dictionary([
