@@ -58,6 +58,13 @@ struct MoodTrendChart: View {
                         )
                     )
                     .interpolationMethod(.catmullRom)
+
+                    PointMark(
+                        x: .value("Date", point.date),
+                        y: .value("Score", point.average)
+                    )
+                    .foregroundStyle(Color.appPrimary)
+                    .symbolSize(last30Days.count < 3 ? 40 : 20)
                 }
                 .chartYScale(domain: 1...10)
                 .chartXAxis {
