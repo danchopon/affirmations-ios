@@ -6,5 +6,8 @@ struct AffirmationsWidgets: WidgetBundle {
     var body: some Widget {
         StreakWidget()
         AffirmationWidget()
+        CheckInWidget()
+        WeeklyMoodWidget()
+        TopEmotionWidget()
     }
 }

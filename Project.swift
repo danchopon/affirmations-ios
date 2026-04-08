@@ -64,6 +64,7 @@ let project = Project(
             entitlements: .file(path: "Widgets/Affirmations-Widget.entitlements"),
             dependencies: [
                 .target(name: "CorePersistence"),
+                .target(name: "DesignSystem"),
                 .sdk(name: "SwiftData", type: .framework, status: .required),
                 .sdk(name: "WidgetKit", type: .framework, status: .required)
             ]
