@@ -42,7 +42,31 @@ let project = Project(
                 .target(name: "CoreNotifications"),
                 .target(name: "CorePurchases"),
                 .target(name: "DesignSystem"),
+                .target(name: "AffirmationsWidget"),
                 .sdk(name: "SwiftData", type: .framework, status: .required)
+            ]
+        ),
+
+        // MARK: - Widget Extension
+
+        .target(
+            name: "AffirmationsWidget",
+            destinations: .iOS,
+            product: .appExtension,
+            bundleId: "danchopon.affirmations.app.widget",
+            deploymentTargets: deploymentTargets,
+            infoPlist: .extendingDefault(with: [
+                "NSExtension": .dictionary([
+                    "NSExtensionPointIdentifier": "com.apple.widgetkit-extension"
+                ])
+            ]),
+            sources: ["Widgets/Sources/**"],
+            entitlements: .file(path: "Widgets/Affirmations-Widget.entitlements"),
+            dependencies: [
+                .target(name: "CorePersistence"),
+                .target(name: "DesignSystem"),
+                .sdk(name: "SwiftData", type: .framework, status: .required),
+                .sdk(name: "WidgetKit", type: .framework, status: .required)
             ]
         ),
 
