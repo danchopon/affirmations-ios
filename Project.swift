@@ -1,14 +1,18 @@
 import ProjectDescription
 
 let deploymentTargets = DeploymentTargets.iOS("17.0")
+let developmentTeam = Environment.developmentTeam.getString(default: "")
 
 let project = Project(
     name: "Affirmations",
-    organizationName: "com.affirmations",
+    organizationName: "danchopon.affirmations",
     options: .options(
         automaticSchemesOptions: .enabled(),
         developmentRegion: "en"
     ),
+    settings: .settings(base: [
+        "DEVELOPMENT_TEAM": "\(developmentTeam)"
+    ]),
     targets: [
 
         // MARK: - App
@@ -17,7 +21,7 @@ let project = Project(
             name: "Affirmations",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.affirmations.app",
+            bundleId: "danchopon.affirmations.app",
             deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": .dictionary([:]),
@@ -48,7 +52,7 @@ let project = Project(
             name: "CheckIn",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.checkin",
+            bundleId: "danchopon.affirmations.checkin",
             deploymentTargets: deploymentTargets,
             sources: ["Features/CheckIn/Sources/**"],
             dependencies: [
@@ -63,7 +67,7 @@ let project = Project(
             name: "Affirmation",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.affirmation",
+            bundleId: "danchopon.affirmations.affirmation",
             deploymentTargets: deploymentTargets,
             sources: ["Features/Affirmation/Sources/**"],
             dependencies: [
@@ -78,7 +82,7 @@ let project = Project(
             name: "History",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.history",
+            bundleId: "danchopon.affirmations.history",
             deploymentTargets: deploymentTargets,
             sources: ["Features/History/Sources/**"],
             dependencies: [
@@ -92,7 +96,7 @@ let project = Project(
             name: "Insights",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.insights",
+            bundleId: "danchopon.affirmations.insights",
             deploymentTargets: deploymentTargets,
             sources: ["Features/Insights/Sources/**"],
             dependencies: [
@@ -106,7 +110,7 @@ let project = Project(
             name: "Settings",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.settings",
+            bundleId: "danchopon.affirmations.settings",
             deploymentTargets: deploymentTargets,
             sources: ["Features/Settings/Sources/**"],
             dependencies: [
@@ -121,7 +125,7 @@ let project = Project(
             name: "Paywall",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.paywall",
+            bundleId: "danchopon.affirmations.paywall",
             deploymentTargets: deploymentTargets,
             sources: ["Features/Paywall/Sources/**"],
             dependencies: [
@@ -137,7 +141,7 @@ let project = Project(
             name: "CoreAnalytics",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.core.analytics",
+            bundleId: "danchopon.affirmations.core.analytics",
             deploymentTargets: deploymentTargets,
             sources: ["Core/CoreAnalytics/Sources/**"]
         ),
@@ -146,7 +150,7 @@ let project = Project(
             name: "CorePersistence",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.core.persistence",
+            bundleId: "danchopon.affirmations.core.persistence",
             deploymentTargets: deploymentTargets,
             sources: ["Core/CorePersistence/Sources/**"],
             dependencies: [
@@ -158,7 +162,7 @@ let project = Project(
             name: "CoreAI",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.core.ai",
+            bundleId: "danchopon.affirmations.core.ai",
             deploymentTargets: deploymentTargets,
             sources: ["Core/CoreAI/Sources/**"],
             dependencies: [
@@ -170,7 +174,7 @@ let project = Project(
             name: "CoreNotifications",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.core.notifications",
+            bundleId: "danchopon.affirmations.core.notifications",
             deploymentTargets: deploymentTargets,
             sources: ["Core/CoreNotifications/Sources/**"]
         ),
@@ -179,7 +183,7 @@ let project = Project(
             name: "CorePurchases",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.core.purchases",
+            bundleId: "danchopon.affirmations.core.purchases",
             deploymentTargets: deploymentTargets,
             sources: ["Core/CorePurchases/Sources/**"],
             dependencies: [
@@ -193,7 +197,7 @@ let project = Project(
             name: "DesignSystem",
             destinations: .iOS,
             product: .framework,
-            bundleId: "com.affirmations.designsystem",
+            bundleId: "danchopon.affirmations.designsystem",
             deploymentTargets: deploymentTargets,
             sources: ["DesignSystem/Sources/**"]
         )
