@@ -8,7 +8,6 @@ import Paywall
 struct ContentView: View {
     @Environment(AppRouter.self) private var router
     @State private var errorHandler = ErrorHandler()
-
     var body: some View {
         @Bindable var router = router
 

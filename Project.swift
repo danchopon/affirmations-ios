@@ -102,7 +102,8 @@ let project = Project(
             dependencies: [
                 .target(name: "CoreAnalytics"),
                 .target(name: "CorePersistence"),
-                .target(name: "DesignSystem")
+                .target(name: "DesignSystem"),
+                .sdk(name: "Charts", type: .framework, status: .required)
             ]
         ),
 
