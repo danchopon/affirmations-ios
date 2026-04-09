@@ -1,26 +1,28 @@
 import SwiftUI
 import SwiftData
 import CorePersistence
-import CorePurchases
 import CoreAnalytics
 import DesignSystem
 
 public struct SettingsView: View {
     @Environment(\.analytics) private var analytics
     @Environment(\.modelContext) private var modelContext
-    @Environment(AppRouter.self) private var router
     @Query(sort: \UserProfile.id) private var profiles: [UserProfile]
 
     @State private var viewModel: SettingsViewModel?
 
-    public init() {}
+    private let onManageSubscription: () -> Void
+
+    public init(onManageSubscription: @escaping () -> Void) {
+        self.onManageSubscription = onManageSubscription
+    }
 
     private var profile: UserProfile? { profiles.first }
 
     public var body: some View {
         Group {
             if let vm = viewModel {
-                SettingsForm(vm: vm, profile: profile, router: router)
+                SettingsForm(vm: vm, profile: profile, onManageSubscription: onManageSubscription)
             } else {
                 ProgressView()
                     .onAppear { setup() }
@@ -46,7 +48,7 @@ public struct SettingsView: View {
 private struct SettingsForm: View {
     @Bindable var vm: SettingsViewModel
     let profile: UserProfile?
-    let router: AppRouter
+    let onManageSubscription: () -> Void
 
     var body: some View {
         Form {
@@ -54,9 +56,11 @@ private struct SettingsForm: View {
             Section {
                 Picker("Affirmation tone", selection: $vm.selectedTone) {
                     ForEach(ToneType.allCases, id: \.self) { tone in
+//                        Text("\(tone.displayName) — \(tone.subtitle)")
+//                            .tag(tone)
                         VStack(alignment: .leading) {
                             Text(tone.displayName)
-                            Text(tone.description)
+                            Text(tone.subtitle)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -112,7 +116,8 @@ private struct SettingsForm: View {
             // Subscription
             Section {
                 Button("Manage Subscription") {
-                    router.presentPaywall(trigger: .manualUpgrade)
+                    vm.trackManageSubscriptionTapped()
+                    onManageSubscription()
                 }
             }
 

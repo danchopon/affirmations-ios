@@ -141,7 +141,6 @@ let project = Project(
             dependencies: [
                 .target(name: "CoreAnalytics"),
                 .target(name: "CorePersistence"),
-                .target(name: "CorePurchases"),
                 .target(name: "CoreNotifications"),
                 .target(name: "DesignSystem")
             ]

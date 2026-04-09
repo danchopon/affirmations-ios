@@ -77,10 +77,14 @@ public final class SettingsViewModel {
         await notificationService.scheduleDailyReminder(at: time)
     }
 
+    func trackManageSubscriptionTapped() {
+        analytics.track(SettingsEvent.manageSubscriptionTapped)
+    }
+
     func toggleAIConsent(granted: Bool, profile: UserProfile?) {
         guard let profile else { return }
         profile.aiConsentGranted = granted
-        if !granted { profile.aiConsentDate = nil }
+        profile.aiConsentDate = granted ? .now : nil
         save()
         analytics.track(SettingsEvent.aiConsentToggled(granted: granted))
     }

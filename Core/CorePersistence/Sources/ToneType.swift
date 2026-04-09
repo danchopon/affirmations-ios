@@ -13,7 +13,7 @@ public enum ToneType: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    public var description: String {
+    public var subtitle: String {
         switch self {
         case .motivational: return "Energizing and action-oriented"
         case .gentle: return "Soft, nurturing, and kind"
