@@ -28,7 +28,9 @@ struct ContentView: View {
             .tabItem { Label("Insights", systemImage: "chart.bar.fill") }
 
             NavigationStack(path: $router.settingsPath) {
-                SettingsView()
+                SettingsView {
+                    router.presentPaywall(trigger: .manualUpgrade)
+                }
             }
             .tabItem { Label("Settings", systemImage: "gear") }
         }
